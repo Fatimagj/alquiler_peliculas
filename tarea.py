@@ -1,7 +1,14 @@
 import csv, os
-ruta_alquiler = "datos/alquileres.csv"
+ruta_alquiler = "datos/ejemplos.csv"
 ruta_catalogo = "datos/catalogo.csv"
 
+
+def filtro_existe_registros(lista, elemento):
+    for i in lista:
+        if elemento["titulo"]==i["titulo"] and elemento["Director"]==i["Director"] and elemento["sinopsis"]==i["sinopsis"] and elemento["copia"]==i["copia"]:
+            return True
+            break
+    return False
 
 class Dao:
     def __init__(self, ruta_alquiler, ruta_catalogo):
@@ -21,13 +28,17 @@ class Dao:
         catalogo_titulos = {} #se crea un diccionario vacio
         for r in self.leer_alquiler(): #iteramos sobre cada filar del archivo alquileres qu elo leemos llamando a la función anterior. la variable r representa cada fila del archivo.
             titulo = r["titulo"] #srepresenta el titulo de la película
-            if titulo in catalogo_titulos: #si el titulo ya está en el diccionario
-                catalogo_titulos[titulo]["copia"] += 1 #se incrementa el numero de copias en uno
+            sinopsis = r["sinopsis"]
+            director = r["Director"]
+            año = r["año"]
+            copia =r["copia"]
+            if not filtro_existe_registros(list(catalogo_titulos.values()), r): #si el titulo ya está en el diccionario    catalogo_titulos[titulo] = {"titulo": titulo, "sinopsis": sinopsis, "Director": director, "año": año, "copia": 1} #agregamoss una nueva entrada al diccionario
+                catalogo_titulos[titulo] = {"titulo": titulo, "sinopsis": sinopsis, "Director": director, "año": año, "copia": 1}
+
             else:
-                sinopsis = r["sinopsis"]
-                director = r["Director"]
-                año = r["año"]
-                catalogo_titulos[titulo] = {"titulo": titulo, "sinopsis": sinopsis, "Director": director, "año": año, "copia": 1} #agregamoss una nueva entrada al diccionario
+                catalogo_titulos[titulo]["copia"] += copia
+
+                
         return catalogo_titulos
     
     def crear_catalogo(self):
@@ -45,6 +56,6 @@ class Dao:
 
 
 dao = Dao(ruta_alquiler, ruta_catalogo)
-#print(dao)
+
 
 
